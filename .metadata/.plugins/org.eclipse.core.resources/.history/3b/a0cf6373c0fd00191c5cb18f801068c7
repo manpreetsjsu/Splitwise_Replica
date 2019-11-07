@@ -1,0 +1,10 @@
+import java.util.ArrayList;
+
+public class GroupList {
+	private ArrayList<Group> groupList;
+	
+	public void addGroup(Group newGroup) {
+		System.out.println(newGroup);
+		groupList.add(0,newGroup);
+	}
+}

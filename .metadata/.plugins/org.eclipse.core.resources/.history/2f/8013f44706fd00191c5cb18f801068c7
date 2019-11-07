@@ -1,0 +1,33 @@
+import javax.swing.*;
+
+public class GUITester {
+	
+	public static void initComponents() {
+        JTextField createNewGroupField = new JTextField(10);
+        JLabel createNewGroupLabel = new JLabel();
+        JButton createNewGroupButton = new JButton();
+        
+        createNewGroupField.setText("Type Here New Group Name");
+        createNewGroupLabel.setText("Create New Group");
+        createNewGroupButton.setText("Create Group");
+        
+        // create panel for "Start New Group Column"
+        JPanel createNewGroupPanel = new JPanel();
+        createNewGroupPanel.add(createNewGroupLabel)
+        createNewGroupPanel.add(createNewGroupField);
+        createNewGroupPanel.add(createNewGroupButton);
+        
+        JFrame mainFrameWindow = new JFrame() ;
+        mainFrameWindow.add(createNewGroupPanel);
+        
+        mainFrameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrameWindow.pack();
+        mainFrameWindow.setVisible(true);
+	}
+	public static void main(String[] args) {
+		
+		initComponents();
+	}
+	
+	
+}
