@@ -1,13 +1,13 @@
 #ignore .class files
-#*.class
-#*.classpath
-#.classpath/
-#.project
-#.settings/
-#/bin/
+*.class
+*.classpath
+.classpath/
+.project
+.settings/
+/bin/
 
 #ignore vscode ide files
 .vscode/
 
 #ignore metada
-#.metadata/
+.metadata/

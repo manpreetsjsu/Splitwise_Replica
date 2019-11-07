@@ -1,2 +1,0 @@
-INDEX VERSION 1.131+E:\SJSU sem courses\semester8\cs151\151-project\Splitwise_Replica\.metadata\.plugins\org.eclipse.jdt.core
-1860891807.index
