@@ -1,0 +1,45 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.LayoutManager;
+
+import javax.swing.*;
+
+import com.sun.java.util.jar.pack.Attribute.Layout;
+
+public class GUITester {
+	
+	public static void initComponents() {
+		
+		JFrame mainFrameWindow = new JFrame() ;
+        JTextField createNewGroupField = new JTextField(10);
+        JLabel createNewGroupLabel = new JLabel();
+        JButton createNewGroupButton = new JButton();
+        
+        createNewGroupLabel.setText("Create New Group");
+        createNewGroupButton.setText("Create Group");
+        
+        // create panel for "Start New Group Column"
+        JPanel createNewGroupPanel = new JPanel();
+        createNewGroupPanel.add(createNewGroupLabel);
+        createNewGroupPanel.add(createNewGroupField);
+        createNewGroupPanel.add(createNewGroupButton);
+        
+        //create panel for "Showing Group List"
+        JPanel groupPanel = new JPanel(new BoxLayout(mainFrameWindow.getContentPane(), BoxLayout.Y_AXIS));
+        
+        
+        mainFrameWindow.setTitle("SplitWisely");
+        mainFrameWindow.add(createNewGroupPanel, BorderLayout.WEST);
+
+        mainFrameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrameWindow.pack();
+        mainFrameWindow.setVisible(true);
+
+	}
+	public static void main(String[] args) {
+		
+		initComponents();
+	}
+	
+	
+}
