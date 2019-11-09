@@ -73,7 +73,16 @@ public class NewJFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         showActivityList = new javax.swing.JList<>();
         deleteActivity = new javax.swing.JButton();
+        
+        balancePanel = new javax.swing.JPanel();
+        balanceLabel = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        balanceSelector = new javax.swing.JList<>();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        balanceList = new javax.swing.JList<>();
+        balanceMemberLabel = new javax.swing.JLabel();
 
+        
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Splitwise_Replica");
 
@@ -82,6 +91,7 @@ public class NewJFrame extends javax.swing.JFrame {
         groupInputLabel.setText("Enter Group");
 
         groupNameInput.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(66, 135, 245)));
+
 
         groupListLabel.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         groupListLabel.setText("Group List");
@@ -157,6 +167,7 @@ public class NewJFrame extends javax.swing.JFrame {
         deleteMemberBtn.setText("Delete Member");
 
         createMemberBtn.setText("Add Member");
+
 
         javax.swing.GroupLayout addMemberPanelLayout = new javax.swing.GroupLayout(addMemberPanel);
         addMemberPanel.setLayout(addMemberPanelLayout);
@@ -353,7 +364,67 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addComponent(deleteActivity)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        
+        ///////
+        
+        balancePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(66, 135, 245)));
 
+        balanceLabel.setFont(new java.awt.Font("Tahoma", 1, 27)); // NOI18N
+        balanceLabel.setText("Balance");
+
+        balanceSelector.setBackground(new java.awt.Color(240, 240, 204));
+        balanceSelector.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(balanceSelector);
+
+        balanceMemberLabel.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        balanceMemberLabel.setText("Choose Member");
+
+        balanceList.setBackground(new java.awt.Color(240, 240, 204));
+        balanceList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(balanceList);
+
+        javax.swing.GroupLayout balancePanelLayout = new javax.swing.GroupLayout(balancePanel);
+        balancePanel.setLayout(balancePanelLayout);
+        balancePanelLayout.setHorizontalGroup(
+            balancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(balancePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(balancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(balancePanelLayout.createSequentialGroup()
+                        .addComponent(balanceMemberLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(balancePanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, balancePanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(balanceLabel)
+                .addGap(189, 189, 189))
+        );
+        balancePanelLayout.setVerticalGroup(
+            balancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(balancePanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(balanceLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(balanceMemberLabel)
+                .addGap(7, 7, 7)
+                .addGroup(balancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(91, 91, 91))
+        );
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -367,19 +438,26 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(addTransactionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(activityPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(97, Short.MAX_VALUE))
+                .addGap(50, 50, 50)
+                .addComponent(balancePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(90, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(groupPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(addTransactionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(56, 56, 56)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(activityPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addMemberPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(groupPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(addTransactionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(56, 56, 56)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(activityPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(addMemberPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(274, 274, 274)
+                        .addComponent(balancePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(86, Short.MAX_VALUE))
         );
 
@@ -611,5 +689,15 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel splitLabel;
     private javax.swing.JList<String> splitList;
     private javax.swing.JScrollPane splitScrollPane;
+    // balance panel variables
+    private javax.swing.JPanel balancePanel;
+    private javax.swing.JLabel balanceLabel;
+    private javax.swing.JList<String> balanceList;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JList<String> balanceSelector;
+    private javax.swing.JLabel balanceMemberLabel;
+
+
     // End of variables declaration                   
 }
