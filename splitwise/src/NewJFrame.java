@@ -1,3 +1,15 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.AbstractList;
+import java.util.ArrayList;
+
+import javax.swing.AbstractListModel;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,6 +22,8 @@
  */
 public class NewJFrame extends javax.swing.JFrame {
 
+   private Group selectedFrameGroup ;
+   private GroupList listOfGroups = new GroupList();
     /**
      * Creates new form NewJFrame
      */
@@ -68,37 +82,21 @@ public class NewJFrame extends javax.swing.JFrame {
         groupInputLabel.setText("Enter Group");
 
         groupNameInput.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(66, 135, 245)));
-        groupNameInput.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                //groupNameInputActionPerformed(evt);
-            }
-        });
 
         groupListLabel.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         groupListLabel.setText("Group List");
 
         groupList.setBackground(new java.awt.Color(255, 255, 204));
-        groupList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        groupListScrollPane.setViewportView(groupList);
+        
+        //custom code
+        initializeGroupPanel();
 
+        groupListScrollPane.setViewportView(groupList);
         createGroupBtn.setText("Create Group");
-        createGroupBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createGroupBtnActionPerformed(evt);
-            }
-        });
 
         deleteGroupBtn.setBackground(new java.awt.Color(245, 66, 66));
         deleteGroupBtn.setText("Delete Group");
-        deleteGroupBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteGroupBtnActionPerformed(evt);
-            }
-        });
+
 
         javax.swing.GroupLayout groupPanelLayout = new javax.swing.GroupLayout(groupPanel);
         groupPanel.setLayout(groupPanelLayout);
@@ -144,21 +142,15 @@ public class NewJFrame extends javax.swing.JFrame {
         addMemberLabel.setText("Enter Member");
 
         memberNameInput.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(66, 135, 245)));
-        memberNameInput.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                memberNameInputActionPerformed(evt);
-            }
-        });
 
         memberListLabel.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         memberListLabel.setText("Member List");
 
         memberList.setBackground(new java.awt.Color(255, 255, 204));
-        memberList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        
+        //custom code
+        initializeMemberPanel();
+        
         memberListScrollPane.setViewportView(memberList);
 
         deleteMemberBtn.setBackground(new java.awt.Color(245, 66, 66));
@@ -392,16 +384,178 @@ public class NewJFrame extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>                        
+    }// </editor-fold>  
 
-    private void createGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        // TODO add your handling code here:
+     public void groupNameInputActionPerformed(java.awt.event.ActionEvent evt){
+
+     }
+     
+    private void initializeGroupPanel() {
+        groupList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "No Group Exists" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        groupList.disable();
+        
+        groupNameInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                groupNameInputActionPerformed(evt);
+            }
+        });
+        
+        //action listener for createbtn
+        createGroupBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createGroupBtnActionPerformed(evt);
+            }
+        });
+        
+        deleteGroupBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteGroupBtnActionPerformed(evt);
+            }
+        });
+        
+        //action listener for group list for selection
+        groupList.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				String selectedGrpName = groupList.getSelectedValue();
+				for(Group g:listOfGroups.getGroupList()) {
+					if(g.getName()== selectedGrpName) {
+						selectedFrameGroup = g ;
+					}
+				}
+				updateMemberList();
+			}
+		});
+    }
+    
+    private void initializeMemberPanel() {
+        memberList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "No Member Exist" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        memberList.disable();
+        
+        memberNameInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                memberNameInputActionPerformed(evt);
+            }
+        });
+        
+        createMemberBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				createMemberBtnActionPerformed();
+				
+			}
+		});
+        
+        deleteMemberBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deleteMemberBtnActionPerformed();
+				
+			}
+		});
+        memberList.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				
+				
+			}
+		});
+    }
+    private void createGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {   
+        Group g = new Group(groupNameInput.getText()) ;
+        listOfGroups.addGroup(g);
+        groupNameInput.setText("");
+        updateGroupList();
+        //select currently created group
+        selectedFrameGroup = g ;
+        groupList.setSelectedValue(g.getName(), true);
+    }      
+    
+    public void updateGroupList() {
+        ArrayList<String> grpNames = new ArrayList<>();
+        if(listOfGroups.getGroupList().size() == 0) {
+        	grpNames.add("No Group Exist");
+        	groupList.disable();
+        }
+        else groupList.enable();
+  
+        for(Group grp:listOfGroups.getGroupList()){
+            grpNames.add(grp.getName());
+        }
+        groupList.setModel(new javax.swing.AbstractListModel<String>() {   
+            public int getSize() { return grpNames.size(); }
+            public String getElementAt(int i) { return grpNames.get(i); }
+           
+        });
+        
+    }
+
+    private void deleteGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {    
+        ArrayList<String> list =  (ArrayList<String>) groupList.getSelectedValuesList();
+        for(String s: list) {
+        	if(selectedFrameGroup.getName() == s) {
+        		selectedFrameGroup = null ;
+        	}
+        	listOfGroups.deleteGroup(s.hashCode());
+        }
+        updateGroupList();
+        updateMemberList();
+    	
     }                                              
+    
+    private void createMemberBtnActionPerformed(){
+    	Member m = new  Member(memberNameInput.getText());
+    	if(selectedFrameGroup != null) {
+    		selectedFrameGroup.addMember(m);
+    		memberNameInput.setText("");
+    		updateMemberList();
+    	}
+    	else {
+    		JOptionPane.showMessageDialog(null, "Please Select Group from the list !");
+    	}
+    }
+    
+    private void updateMemberList() {
+    	ArrayList<String> memberNames = new ArrayList<String>();
+    	if(selectedFrameGroup == null || selectedFrameGroup.getMembers().size() == 0) {
+    		memberNames.add("No Member Exist");
+    		memberList.disable();
+    	}
+    	else memberList.enable();
+    	if(selectedFrameGroup != null) {
+        	for(Member m : selectedFrameGroup.getMembers()) {
+        		memberNames.add(m.getName());
+        	}
+    	}
 
-    private void deleteGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        // TODO add your handling code here:
-    }                                              
-
+        memberList.setModel(new javax.swing.AbstractListModel<String>() {
+            public int getSize() { return memberNames.size(); }
+            public String getElementAt(int i) { return memberNames.get(i); }
+        });
+    }
+    
+    private void deleteMemberBtnActionPerformed() {
+    	ArrayList<String> selectedMembers = (ArrayList<String>) memberList.getSelectedValuesList();
+    	if(selectedFrameGroup != null) {
+    		for(String s: selectedMembers) {
+    			selectedFrameGroup.deleteMember(s.hashCode());
+    		}
+    	}
+    	updateMemberList();
+    }
+    
     private void amountInputActionPerformed(java.awt.event.ActionEvent evt) {                                            
         // TODO add your handling code here:
     }                                           
@@ -422,40 +576,6 @@ public class NewJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                                              
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new NewJFrame().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify                     
     private javax.swing.JLabel activitiesLabel;
