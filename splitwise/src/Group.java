@@ -1,31 +1,37 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class Group {
 	
 	private String name;
-	private ArrayList<Member> memberList ;
+	//private ArrayList<Member> memberList ;
+	private HashMap<Integer,Member> memberList ;
 	
 	public Group(String name) {
 		this.name = name;
-		memberList= new ArrayList<>();
+		memberList= new HashMap<>();
+	
 	}
 	
 	public String getName() {
 		return this.name ;
 	}
+	
+	public void setName(String newName) {
+		this.name = newName;
+	}
 	public void addMember(Member m) {
-		memberList.add(m);
+		if(memberList.containsKey(m.getName().hashCode())) return ;
+		memberList.putIfAbsent(m.getName().hashCode(), m);
 	}
 	
-	public ArrayList<Member> getMembers(){
-		return this.memberList;
+	public Collection<Member> getMembers(){
+		return this.memberList.values();
 	}
 	
-	public void deleteMember(Member m) {
-		for(int index=0; index<memberList.size(); index++) {
-			if(memberList.get(index) == m)
-				memberList.remove(index);
-		}
+	public void deleteMember(int key) {
+		memberList.remove(key);
 	}
 	
 }

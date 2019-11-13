@@ -6,6 +6,7 @@ public class Member {
 	private float balance ;
 	private ArrayList<Transaction> activities ;
 	
+	
 	public Member(String name) {
 		this.name = name ;
 		activities = new ArrayList<>();
@@ -27,5 +28,8 @@ public class Member {
 	
 	}
 	
+	public String getName() {
+		return this.name;
+	}
 	
 }
