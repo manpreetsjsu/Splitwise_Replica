@@ -14,4 +14,8 @@ public class Transaction {
 		this.payer = payer;
 	}
 
+	public String getTransactionString() {
+		return (payer.getName() + " added '" + description + "' which cost $" + amount);
+	}
+
 }

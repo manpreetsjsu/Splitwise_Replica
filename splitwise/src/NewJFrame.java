@@ -330,17 +330,8 @@ public class NewJFrame extends javax.swing.JFrame {
         activitiesLabel.setText("Group Activities or Transactions");
 
         showActivityList.setBackground(new java.awt.Color(240, 240, 204));
-        showActivityList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
 
-            public int getSize() {
-                return strings.length;
-            }
-
-            public String getElementAt(int i) {
-                return strings[i];
-            }
-        });
+        initializeTransactionPanel();
         jScrollPane1.setViewportView(showActivityList);
 
         deleteActivity.setBackground(new java.awt.Color(245, 66, 66));
@@ -753,13 +744,24 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     private void descriptionInputActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+
+    }
+
+    private void appendTransactionBtnActionPerformed(java.awt.event.ActionEvent evt) {
+        Group g = new Group(groupNameInput.getText());
+        listOfGroups.addGroup(g);
+        groupNameInput.setText("");
+        updateGroupList();
+        // select currently created group
+        selectedFrameGroup = g;
+        groupList.setSelectedValue(g.getName(), true);
     }
 
     private void addActivityActionPerformed(java.awt.event.ActionEvent evt) {
 
         ArrayList<String> selectedPayerList = (ArrayList<String>) payerList.getSelectedValuesList();
         ArrayList<String> selectedSplitList = (ArrayList<String>) splitList.getSelectedValuesList();
+
         if (selectedPayerList.size() > 1) {
             JOptionPane.showMessageDialog(null, "Please Select Only One Payer!");
             return;
@@ -783,13 +785,66 @@ public class NewJFrame extends javax.swing.JFrame {
 
             m.modifyOweList(selectedPayer, amountToSplit);
         }
+
+        selectedFrameGroup.addTransactions(
+                addTransaction(selectedSplitList, selectedPayer, Double.parseDouble(amountInput.getText())));
+
         payerList.clearSelection();
         splitList.clearSelection();
         amountInput.setText("");
+        descriptionInput.setText("");
         selectedFrameGroup.simplifyGroupDebts();
         showOweListBalances();
         showSimplifiedBalances();
+        updateTransactionsPanel();
+    }
 
+    private Transaction addTransaction(ArrayList<String> selectedSplitList, Member selectedPayer,
+            double amountToSplit) {
+        ArrayList<Member> membersToTransaction = new ArrayList<>();
+        for (int i = 0; i < selectedSplitList.size(); i++) {
+            Member m = selectedFrameGroup.getMemberListMap().get(selectedSplitList.get(i).hashCode());
+            membersToTransaction.add(m);
+        }
+        Transaction oneTransaction = new Transaction(selectedPayer, descriptionInput.getText(), (float) amountToSplit,
+                membersToTransaction);
+        return oneTransaction;
+    }
+
+    public void initializeTransactionPanel() {
+        showActivityList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "There are no transactions." };
+
+            public int getSize() {
+                return strings.length;
+            }
+
+            public String getElementAt(int i) {
+                return strings[i];
+            }
+        });
+        showActivityList.disable();
+    }
+
+    public void updateTransactionsPanel() {
+        ArrayList<String> listedTransactions = new ArrayList<>();
+
+        if (selectedFrameGroup.getTransactions() != null) {
+            for (Transaction t : selectedFrameGroup.getTransactions()) {
+                listedTransactions.add(t.getTransactionString());
+            }
+        }
+
+        showActivityList.setModel(new javax.swing.AbstractListModel<String>() {
+            public int getSize() {
+                return listedTransactions.size();
+            }
+
+            public String getElementAt(int i) {
+                return listedTransactions.get(i);
+            }
+        });
+        showActivityList.disable();
     }
 
     private void showOweListBalances() {

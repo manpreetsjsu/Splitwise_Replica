@@ -8,6 +8,7 @@ public class Group {
 	private String name;
 	// private ArrayList<Member> memberList ;
 	private HashMap<Integer, Member> memberList;
+	private ArrayList<Transaction> groupTransactions = new ArrayList<>();
 
 	public Group(String name) {
 		this.name = name;
@@ -82,6 +83,14 @@ public class Group {
 
 			}
 		}
+	}
+
+	public void addTransactions(Transaction transaction) {
+		groupTransactions.add(transaction);
+	}
+
+	public ArrayList<Transaction> getTransactions() {
+		return groupTransactions;
 	}
 
 }
