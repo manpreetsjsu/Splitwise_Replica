@@ -4,6 +4,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.print.attribute.standard.JobHoldUntil;
 import javax.swing.AbstractListModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
@@ -479,7 +480,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 return strings[i];
             }
         });
-        groupList.disable();
+        groupList.setEnabled(false);
 
         groupNameInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -505,13 +506,16 @@ public class NewJFrame extends javax.swing.JFrame {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
+                System.out.println("Group Lst Change Listener Invoked");
                 String selectedGrpName = groupList.getSelectedValue();
                 for (Group g : listOfGroups.getGroupList()) {
                     if (g.getName() == selectedGrpName) {
                         selectedFrameGroup = g;
+                        System.out.println("selected group is: " + g.getName());
                     }
                 }
                 updateMemberList();
+                updateTransactionsPanel();
             }
         });
     }
@@ -528,7 +532,8 @@ public class NewJFrame extends javax.swing.JFrame {
                 return strings[i];
             }
         });
-        memberList.disable();
+        memberList.setEnabled(false);
+        ;
 
         memberNameInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -594,11 +599,20 @@ public class NewJFrame extends javax.swing.JFrame {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                // TODO Auto-generated method stub
-                String selectedMember = balanceSelector.getSelectedValue();
-                Member m = selectedFrameGroup.getMemberListMap().get(selectedMember.hashCode());
-                selectedBalanceMember = m;
-                updateBalanceList(m); // updates balance list in GUI
+                if (selectedFrameGroup != null) {
+                    System.out.println("balance selector listener invoked");
+                    String selectedMember = balanceSelector.getSelectedValue();
+                    System.out.println(selectedFrameGroup);
+                    System.out.println(selectedMember);
+                    Map<Integer, Member> map = selectedFrameGroup.getMemberListMap();
+                    // if map size is greater than zero and selectedMember is not null
+                    Member m = (map.size() > 0 && selectedMember != null) ? map.get(selectedMember.hashCode()) : null;
+                    selectedBalanceMember = m;
+
+                } else {
+                    selectedBalanceMember = null;
+                }
+                updateBalanceList(selectedBalanceMember); // updates balance list in GUI
             }
         });
 
@@ -606,9 +620,16 @@ public class NewJFrame extends javax.swing.JFrame {
 
     public void updateBalanceList(Member m) {
         ArrayList<String> balances = new ArrayList<>();
-        for (Map.Entry<Member, Double> elm : m.getSimplifiedDebtList().entrySet()) {
-            String s = m.getName() + " " + "owes" + " " + elm.getKey().getName() + " " + elm.getValue();
-            balances.add(s);
+        if (m != null) {
+            for (Map.Entry<Member, Double> elm : m.getSimplifiedDebtList().entrySet()) {
+                String s = m.getName() + " " + "owes" + " " + elm.getKey().getName() + " " + elm.getValue();
+                balances.add(s);
+            }
+            // this person does not owe anyone
+            if (balances.size() == 0)
+                balances.add(m.getName() + " " + "does not owe anyone");
+        } else {
+            balances.add("No Member Selected/Exists");
         }
 
         //
@@ -626,22 +647,31 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     private void createGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {
+        if (groupNameInput.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Group Name can not be empty!");
+            return;
+        }
         Group g = new Group(groupNameInput.getText());
         listOfGroups.addGroup(g);
         groupNameInput.setText("");
-        updateGroupList();
         // select currently created group
         selectedFrameGroup = g;
+        updateGroupList();
+        System.out.println("New Group Created and Selected: " + g.getName());
         groupList.setSelectedValue(g.getName(), true);
+        updateTransactionsPanel();
+
     }
 
     public void updateGroupList() {
+        System.out.println("Update Group List Invoked");
         ArrayList<String> grpNames = new ArrayList<>();
         if (listOfGroups.getGroupList().size() == 0) {
             grpNames.add("No Group Exist");
-            groupList.disable();
+            groupList.setEnabled(false);
+            ;
         } else
-            groupList.enable();
+            groupList.setEnabled(true);
 
         for (Group grp : listOfGroups.getGroupList()) {
             grpNames.add(grp.getName());
@@ -664,15 +694,20 @@ public class NewJFrame extends javax.swing.JFrame {
         for (String s : list) {
             if (selectedFrameGroup.getName() == s) {
                 selectedFrameGroup = null;
+                selectedBalanceMember = null;
             }
             listOfGroups.deleteGroup(s.hashCode());
         }
         updateGroupList();
         updateMemberList();
-
+        updateTransactionsPanel();
     }
 
     private void createMemberBtnActionPerformed() {
+        if (memberNameInput.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Member Name can not be empty!");
+            return;
+        }
         Member m = new Member(memberNameInput.getText());
         if (selectedFrameGroup != null) {
             selectedFrameGroup.addMember(m);
@@ -683,7 +718,11 @@ public class NewJFrame extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Update the member list in every list which display members as list
+     */
     private void updateMemberList() {
+        System.out.println("Update Member List Invoked");
         ArrayList<String> memberNames = new ArrayList<String>();
         if (selectedFrameGroup == null || selectedFrameGroup.getMembers().size() == 0) {
             memberNames.add("No Member Exist");
@@ -747,7 +786,8 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     private void deleteMemberBtnActionPerformed() {
-        ArrayList<String> selectedMembers = (ArrayList<String>) memberList.getSelectedValuesList();
+        ArrayList<String> selectedMembers = new ArrayList<String>();
+        selectedMembers.addAll(memberList.getSelectedValuesList());
         if (selectedFrameGroup != null) {
             for (String s : selectedMembers) {
                 selectedFrameGroup.deleteMember(s.hashCode());
@@ -776,7 +816,7 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        payerList.disable();
+        payerList.setEnabled(false);
 
         splitList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Please Choose Group!" };
@@ -790,7 +830,7 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        splitList.disable();
+        splitList.setEnabled(false);
 
         addActivity.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -819,10 +859,12 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void addActivityActionPerformed(java.awt.event.ActionEvent evt) {
 
-        ArrayList<String> selectedPayerList = (ArrayList<String>) payerList.getSelectedValuesList();
-        ArrayList<String> selectedSplitList = (ArrayList<String>) splitList.getSelectedValuesList();
+        ArrayList<String> selectedPayerList = new ArrayList<String>();
+        selectedPayerList.addAll(payerList.getSelectedValuesList());
+        ArrayList<String> selectedSplitList = new ArrayList<String>();
+        selectedSplitList.addAll(splitList.getSelectedValuesList());
 
-        if (selectedPayerList.size() > 1) {
+        if (selectedPayerList.size() == 0 || selectedPayerList.size() > 1) {
             JOptionPane.showMessageDialog(null, "Please Select Only One Payer!");
             return;
         }
@@ -833,8 +875,17 @@ public class NewJFrame extends javax.swing.JFrame {
         Member selectedPayer = selectedFrameGroup.getMemberListMap().get(selectedPayerList.get(0).hashCode());
         // System.out.println("Payer is: " + selectedPayer.getName());
         // System.out.println("Size of split list: "+ selectedSplitList.size());
-        double amountToSplit = Double.parseDouble(amountInput.getText()) / selectedSplitList.size();
-
+        double amountToSplit = 0;
+        try {
+            amountToSplit = Double.parseDouble(amountInput.getText()) / selectedSplitList.size();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Please Enter Valid Amount!");
+            return;
+        }
+        if (descriptionInput.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please Enter Description!");
+            return;
+        }
         // update oweList of each split member chosen
         for (int i = 0; i < selectedSplitList.size(); i++) {
             Member m = selectedFrameGroup.getMemberListMap().get(selectedSplitList.get(i).hashCode());
@@ -854,8 +905,8 @@ public class NewJFrame extends javax.swing.JFrame {
         amountInput.setText("");
         descriptionInput.setText("");
         selectedFrameGroup.simplifyGroupDebts();
-        showOweListBalances();
-        showSimplifiedBalances();
+        // showOweListBalances();
+        // showSimplifiedBalances();
         if (selectedBalanceMember != null)
             updateBalanceList(selectedBalanceMember);
         updateTransactionsPanel();
@@ -885,17 +936,23 @@ public class NewJFrame extends javax.swing.JFrame {
                 return strings[i];
             }
         });
-        showActivityList.disable();
+        showActivityList.setEnabled(false);
+        ;
     }
 
     public void updateTransactionsPanel() {
         ArrayList<String> listedTransactions = new ArrayList<>();
 
-        if (selectedFrameGroup.getTransactions() != null) {
+        if (selectedFrameGroup != null) {
             for (Transaction t : selectedFrameGroup.getTransactions()) {
                 listedTransactions.add(t.getTransactionString());
             }
         }
+        if (listedTransactions.size() == 0) {
+            listedTransactions.add("No Transactions!");
+            showActivityList.setEnabled(false);
+        } else
+            showActivityList.setEnabled(true);
 
         showActivityList.setModel(new javax.swing.AbstractListModel<String>() {
             public int getSize() {
@@ -906,7 +963,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 return listedTransactions.get(i);
             }
         });
-        showActivityList.disable();
+
     }
 
     private void showOweListBalances() {
