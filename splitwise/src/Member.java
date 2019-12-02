@@ -19,13 +19,19 @@ public class Member {
 	}
 
 	public ArrayList<Transaction> getActivities() {
-		return this.activities;
+		return (ArrayList<Transaction>) this.activities.clone();
 	}
 
 	public void addActivity(Transaction e) {
 		this.activities.add(e);
 	}
 
+	/**
+	 * Adds to this Member's OweList
+	 * 
+	 * @param m
+	 * @param oweAmount
+	 */
 	public void modifyOweList(Member m, double oweAmount) {
 
 		if (oweList.containsKey(m)) {
@@ -33,6 +39,20 @@ public class Member {
 			return;
 		}
 		oweList.putIfAbsent(m, oweAmount);
+	}
+
+	/**
+	 * Subtract to this Member's OweList
+	 * 
+	 * @param m
+	 * @param oweAmount
+	 */
+	public void subtractFromOweList(Member m, double oweAmount) {
+
+		if (oweList.containsKey(m)) {
+			oweList.put(m, oweList.get(m) - oweAmount);
+		}
+
 	}
 
 	public void modifySimplfiedDebtList(Member m, double oweAmount) {
@@ -46,11 +66,11 @@ public class Member {
 	}
 
 	public HashMap<Member, Double> getOweList() {
-		return this.oweList;
+		return (HashMap<Member, Double>) this.oweList.clone();
 	}
 
 	public HashMap<Member, Double> getSimplifiedDebtList() {
-		return this.simplifiedDebtList;
+		return (HashMap<Member, Double>) this.simplifiedDebtList.clone();
 	}
 
 	public String getName() {

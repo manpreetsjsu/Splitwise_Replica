@@ -90,7 +90,11 @@ public class Group {
 	}
 
 	public ArrayList<Transaction> getTransactions() {
-		return groupTransactions;
+		return (ArrayList<Transaction>) groupTransactions.clone();
+	}
+
+	public void deleteGroupTransaction(ArrayList<Transaction> c) {
+		this.groupTransactions.removeAll(c);
 	}
 
 }
