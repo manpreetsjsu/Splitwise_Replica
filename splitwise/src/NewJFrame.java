@@ -339,11 +339,6 @@ public class NewJFrame extends javax.swing.JFrame {
         deleteActivity.setBackground(new java.awt.Color(245, 66, 66));
         deleteActivity.setText(" Delete Activity ");
         deleteActivity.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        deleteActivity.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteActivityActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout activityPanelLayout = new javax.swing.GroupLayout(activityPanel);
         activityPanel.setLayout(activityPanelLayout);
@@ -690,7 +685,8 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     private void deleteGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {
-        ArrayList<String> list = (ArrayList<String>) groupList.getSelectedValuesList();
+        ArrayList<String> list = new ArrayList<String>();
+        list.addAll(groupList.getSelectedValuesList());
         for (String s : list) {
             if (selectedFrameGroup.getName() == s) {
                 selectedFrameGroup = null;
@@ -701,6 +697,10 @@ public class NewJFrame extends javax.swing.JFrame {
         updateGroupList();
         updateMemberList();
         updateTransactionsPanel();
+        if (listOfGroups.getGroupList().size() == 0)
+            JOptionPane.showMessageDialog(null, "No Group Exist. You can Create New One :)");
+        else if (listOfGroups.getGroupList().size() >= 1)
+            JOptionPane.showMessageDialog(null, "Please select group from Group List!");
     }
 
     private void createMemberBtnActionPerformed() {
@@ -925,42 +925,41 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     public void initializeTransactionPanel() {
-        showActivityList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "There are no transactions." };
+        showActivityList.setModel(new javax.swing.AbstractListModel<Transaction>() {
+            Transaction[] strings = { new Transaction() };
 
             public int getSize() {
                 return strings.length;
             }
 
-            public String getElementAt(int i) {
+            public Transaction getElementAt(int i) {
                 return strings[i];
             }
         });
         showActivityList.setEnabled(false);
-        ;
+
+        deleteActivity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteActivityActionPerformed(evt);
+            }
+        });
     }
 
     public void updateTransactionsPanel() {
-        ArrayList<String> listedTransactions = new ArrayList<>();
 
         if (selectedFrameGroup != null) {
-            for (Transaction t : selectedFrameGroup.getTransactions()) {
-                listedTransactions.add(t.getTransactionString());
-            }
+            if (selectedFrameGroup.getTransactions().size() == 0) {
+                showActivityList.setEnabled(false);
+            } else
+                showActivityList.setEnabled(true);
         }
-        if (listedTransactions.size() == 0) {
-            listedTransactions.add("No Transactions!");
-            showActivityList.setEnabled(false);
-        } else
-            showActivityList.setEnabled(true);
-
-        showActivityList.setModel(new javax.swing.AbstractListModel<String>() {
+        showActivityList.setModel(new javax.swing.AbstractListModel<Transaction>() {
             public int getSize() {
-                return listedTransactions.size();
+                return selectedFrameGroup != null ? selectedFrameGroup.getTransactions().size() : 1;
             }
 
-            public String getElementAt(int i) {
-                return listedTransactions.get(i);
+            public Transaction getElementAt(int i) {
+                return selectedFrameGroup != null ? selectedFrameGroup.getTransactions().get(i) : new Transaction();
             }
         });
 
@@ -993,7 +992,17 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     private void deleteActivityActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        ArrayList<Transaction> t = (ArrayList<Transaction>) showActivityList.getSelectedValuesList();
+        for (Transaction tr : t) {
+            for (Member m : tr.getExpenseMemberList()) {
+                m.subtractFromOweList(tr.getPayer(), tr.getAmount() / tr.getExpenseMemberList().size());
+            }
+        }
+        selectedFrameGroup.deleteGroupTransaction(t);
+        selectedFrameGroup.simplifyGroupDebts();
+        if (selectedBalanceMember != null)
+            updateBalanceList(selectedBalanceMember);
+        updateTransactionsPanel();
     }
 
     // Variables declaration - do not modify
@@ -1026,7 +1035,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel payerLabel;
     private javax.swing.JList<String> payerList;
     private javax.swing.JScrollPane payerScrollPane;
-    private javax.swing.JList<String> showActivityList;
+    private javax.swing.JList<Transaction> showActivityList;
     private javax.swing.JLabel splitLabel;
     private javax.swing.JList<String> splitList;
     private javax.swing.JScrollPane splitScrollPane;
