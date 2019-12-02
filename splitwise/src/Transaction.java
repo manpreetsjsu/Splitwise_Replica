@@ -7,6 +7,10 @@ public class Transaction {
 	private double amount;
 	private ArrayList<Member> expenseMembers;
 
+	public Transaction() {
+
+	}
+
 	public Transaction(Member payer, String text, float amount, ArrayList<Member> members) {
 		this.amount = amount;
 		this.description = text; // needs to be changed
@@ -14,8 +18,28 @@ public class Transaction {
 		this.payer = payer;
 	}
 
+	public Member getPayer() {
+		return this.payer;
+	}
+
+	public double getAmount() {
+		return this.amount;
+	}
+
+	public ArrayList<Member> getExpenseMemberList() {
+		return (ArrayList<Member>) this.expenseMembers.clone();
+	}
+
 	public String getTransactionString() {
-		return (payer.getName() + " added '" + description + "' which cost $" + amount);
+		if (payer != null && description != null)
+			return (payer.getName() + " added '" + description + "' which cost $" + amount);
+
+		return "No Transaction Record";
+	}
+
+	@Override
+	public String toString() {
+		return this.getTransactionString();
 	}
 
 }
